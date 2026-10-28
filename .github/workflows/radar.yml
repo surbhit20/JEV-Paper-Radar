@@ -2,8 +2,9 @@ name: Paper Radar
 
 on:
   schedule:
-    # 02:00 UTC Mon–Fri (10:00 in Taipei): after arXiv's 20:00 US-Eastern announcement, all year round.
-    - cron: "0 2 * * 1-5"
+    # 08:00 in San Francisco Mon–Fri. Cron is UTC-only, so fire at both 15:00 (PDT) and
+    # 16:00 (PST) and let the gate job below drop whichever one is not 08:00 local time.
+    - cron: "0 15,16 * * 1-5"
   workflow_dispatch:
     inputs:
       limit:
@@ -27,7 +28,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.check.outputs.go }}
+    steps:
+      - id: check
+        run: |
+          # Manual runs always go. Scheduled ones go only in the 08:00 hour in San Francisco,
+          # which is 15:00 UTC in summer (PDT) and 16:00 UTC in winter (PST).
+          hour=$(TZ=America/Los_Angeles date +%H)
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$hour" = "08" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+
   radar:
+    needs: gate
+    if: needs.gate.outputs.go == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
