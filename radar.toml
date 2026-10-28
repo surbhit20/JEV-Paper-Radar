@@ -18,7 +18,7 @@ price_per_mtok = 0.042     # USD per million input tokens, used for the cost est
 # ── Where papers come from ──────────────────────────────────────────────────
 [[sources]]
 type = "arxiv"
-categories = ["cs.AI", "cs.CL", "cs.LG", "cs.IR", "stat.ML"]  # ["*"] = every arXiv archive
+categories = ["cs.AI", "cs.CL", "cs.LG", "cs.IR", "cs.MA", "stat.ML"]  # ["*"] = every arXiv archive
 include_cross_lists = true
 
 # [[sources]]
@@ -26,9 +26,9 @@ include_cross_lists = true
 # days = 1
 # categories = ["neuroscience", "bioinformatics"]   # empty = all categories
 
-# [[sources]]
-# type = "huggingface"      # Hugging Face Daily Papers: upvoted papers from any arXiv category
-# min_upvotes = 20          # 5 let 30 extra papers into one radar's shortlist in a day
+[[sources]]
+type = "huggingface"        # Hugging Face Daily Papers: upvoted papers from any arXiv category
+min_upvotes = 20            # 5 let 30 extra papers into one radar's shortlist in a day
 
 # [[sources]]
 # type = "rss"              # any RSS/Atom feed: journals, lab blogs, hnrss.org, newsletters
@@ -42,30 +42,47 @@ include_cross_lists = true
 #   • no negations here; put "not X" into an [[exclude]] entry phrased positively
 #   • no dates or numbers to compare; do that in code, not in the question
 [[interests]]
-id = "agent_eval"
-label = "Agent evaluation"
-text = "Benchmarks or methods for evaluating LLM agents on multi-step tool-use tasks"
+id = "agents"
+label = "LLM agents"
+text = "Builds or improves LLM agents that use tools, browse the web, or write code"
 
 [[interests]]
-id = "calibration"
-label = "LLM calibration"
-text = "Calibration or uncertainty estimation of language model predictions"
+id = "reasoning"
+label = "LLM reasoning"
+text = "Improves or analyzes the reasoning ability of large language models"
+
+[[interests]]
+id = "llm_eval"
+label = "Benchmarks & evaluation"
+text = "Introduces a benchmark or an evaluation method for language models or LLM agents"
+weight = 0.85              # benchmark papers are everywhere; at 1.0 they crowd out the rest
+
+[[interests]]
+id = "open_release"
+label = "Usable release"
+text = "Releases a new open-weight language model, dataset, library, or tool that others can use directly"
+
+[[interests]]
+id = "efficiency"
+label = "Faster & cheaper LLMs"
+text = "Makes language model inference or training faster or cheaper"
+weight = 0.8               # optional, 0–1: down-weight interests that are nice-to-have
 
 [[interests]]
 id = "retrieval"
 label = "RAG & retrieval"
 text = "Retrieval-augmented generation, rerankers, or retrieval quality for question answering"
-weight = 0.9               # optional, 0–1: down-weight interests that are nice-to-have
+weight = 0.7
 
 # Papers matching an exclusion (probability >= thresholds.exclude) are filtered out.
-[[exclude]]
-id = "medical_imaging"
-label = "Medical imaging"
-text = "The main application is medical imaging such as CT or MRI scans"
+# [[exclude]]
+# id = "medical_imaging"
+# label = "Medical imaging"
+# text = "The main application is medical imaging such as CT or MRI scans"
 
 [thresholds]
-must_read = 0.80           # tune these with `paper-radar calibrate` after labelling ~30 papers
-maybe = 0.50
+must_read = 0.95           # tune these with `paper-radar calibrate` after labelling ~30 papers
+maybe = 0.88               # broad interests: 0.80/0.50 shortlisted 295 of 525 papers on 2026-10-28
 exclude = 0.80
 
 [signals]                  # extra per-paper questions, shown as tags
@@ -76,7 +93,7 @@ evidence = false           # Score: how much evaluation the abstract reports
 [output]
 site_dir = "site"          # static site for GitHub Pages
 data_dir = "data"          # audit trail: every decision, committed to the repo
-site_url = ""              # e.g. "https://<you>.github.io/paper-radar" (used in RSS and digests)
+site_url = "https://surbhit20.github.io/JEV-Paper-Radar"            # e.g. "https://<you>.github.io/paper-radar" (used in RSS and digests)
 feed_days = 7
 near_misses = 15
 
